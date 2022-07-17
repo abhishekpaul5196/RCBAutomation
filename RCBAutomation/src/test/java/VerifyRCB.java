@@ -1,6 +1,13 @@
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentReporter;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -10,7 +17,21 @@ public class VerifyRCB {
 
     JSONObject teamObj;
     IPLTeam rcbTeam;
-
+    ExtentSparkReporter reporter;
+    ExtentReports extentReports;
+    ExtentTest test;
+    @BeforeSuite
+    public void beforeSuiteReporting()
+    {
+        reporter=new ExtentSparkReporter("target/ExecutionResult.html");
+        extentReports=new ExtentReports();
+        extentReports.attachReporter(reporter);
+    }
+    @AfterSuite
+    public void afterSuiteReportCereation()
+    {
+        extentReports.flush();
+    }
     @BeforeTest
     public void addRCBTeam() {
         try {
@@ -38,16 +59,21 @@ public class VerifyRCB {
     @Test
     public void verifyForeignPlayers() {
         try {
+            test= extentReports.createTest("Verify Foreign Players");
             int countForeignPlayers = 0;
             for (int i = 0; i < rcbTeam.playerList.size(); i++) {
                 String countryName = rcbTeam.playerList.get(i).playerCountry;
                 if (!countryName.equals("India"))
                     countForeignPlayers++;
             }
-            if (countForeignPlayers <= 4)
+            test.log(Status.INFO,"Total count of foreign players:"+countForeignPlayers);
+            if (countForeignPlayers <= 4) {
                 System.out.println("Test Case: Passed");
+                test.pass("PASSED");
+            }
             else {
                 System.out.println("Test Case:Failed\n"+"Actual count of foreign players:" + countForeignPlayers);
+                test.fail("FAILED");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -57,16 +83,22 @@ public class VerifyRCB {
     @Test
     public void verifyWicketKeeper() {
         try {
+            test= extentReports.createTest("Verify Wicket Keeper");
             int wicketKeeperCount = 0;
             for (int i = 0; i < rcbTeam.playerList.size(); i++) {
                 String playerRole = rcbTeam.playerList.get(i).playerRole;
                 if (playerRole.equals("Wicket-keeper"))
                     wicketKeeperCount++;
             }
+            test.log(Status.INFO,"Total wicket-keeper count:"+wicketKeeperCount);
             if (wicketKeeperCount >0)
+            {
                 System.out.println("Test Case: Passed");
+                test.pass("PASSED");
+            }
             else {
                 System.out.println("Test Case:Failed\n"+"No wicket-keeper found");
+                test.fail("FAILED");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
