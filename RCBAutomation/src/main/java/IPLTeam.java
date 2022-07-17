@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 /*
 This is the class to maintain different properties of a IPL team
@@ -22,5 +23,6 @@ public class IPLTeam {
     {
         this.name=teamName;
         this.location=teamLocation;
+        playerList=new ArrayList<>();
     }
 }
