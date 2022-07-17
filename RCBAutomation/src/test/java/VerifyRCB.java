@@ -38,18 +38,35 @@ public class VerifyRCB {
     @Test
     public void verifyForeignPlayers() {
         try {
-                int countForeignPlayers=0;
-                for(int i=0;i<rcbTeam.playerList.size();i++)
-                {
-                    String countryName=rcbTeam.playerList.get(i).playerCountry;
-                    if(!countryName.equals("India"))
-                        countForeignPlayers++;
-                }
-            if(countForeignPlayers<=4)
+            int countForeignPlayers = 0;
+            for (int i = 0; i < rcbTeam.playerList.size(); i++) {
+                String countryName = rcbTeam.playerList.get(i).playerCountry;
+                if (!countryName.equals("India"))
+                    countForeignPlayers++;
+            }
+            if (countForeignPlayers <= 4)
                 System.out.println("Test Case: Passed");
-            else
-            {
-                System.out.println("Actual count of foreign players:"+countForeignPlayers+"\nTest Case: Failed");
+            else {
+                System.out.println("Test Case:Failed\n"+"Actual count of foreign players:" + countForeignPlayers);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void verifyWicketKeeper() {
+        try {
+            int wicketKeeperCount = 0;
+            for (int i = 0; i < rcbTeam.playerList.size(); i++) {
+                String playerRole = rcbTeam.playerList.get(i).playerRole;
+                if (playerRole.equals("Wicket-keeper"))
+                    wicketKeeperCount++;
+            }
+            if (wicketKeeperCount >0)
+                System.out.println("Test Case: Passed");
+            else {
+                System.out.println("Test Case:Failed\n"+"No wicket-keeper found");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
