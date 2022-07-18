@@ -6,6 +6,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.junit.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
@@ -20,18 +21,20 @@ public class VerifyRCB {
     ExtentSparkReporter reporter;
     ExtentReports extentReports;
     ExtentTest test;
+
     @BeforeSuite
-    public void beforeSuiteReporting()
-    {
-        reporter=new ExtentSparkReporter("target/ExecutionResult.html");
-        extentReports=new ExtentReports();
+    public void beforeSuiteReporting() {
+        reporter = new ExtentSparkReporter("target/ExecutionResult.html");
+        extentReports = new ExtentReports();
         extentReports.attachReporter(reporter);
     }
+
     @AfterSuite
-    public void afterSuiteReportCereation()
-    {
+    public void afterSuiteReportCereation() {
         extentReports.flush();
     }
+
+    //This method will fetch the team details from the json file and will store the details in the object
     @BeforeTest
     public void addRCBTeam() {
         try {
@@ -59,20 +62,20 @@ public class VerifyRCB {
     @Test
     public void verifyForeignPlayers() {
         try {
-            test= extentReports.createTest("Verify Foreign Players");
+            test = extentReports.createTest("Verify Foreign Players");
             int countForeignPlayers = 0;
             for (int i = 0; i < rcbTeam.playerList.size(); i++) {
                 String countryName = rcbTeam.playerList.get(i).playerCountry;
                 if (!countryName.equals("India"))
                     countForeignPlayers++;
             }
-            test.log(Status.INFO,"Total count of foreign players:"+countForeignPlayers);
-            if (countForeignPlayers <= 4) {
+            test.log(Status.INFO, "Total count of foreign players:" + countForeignPlayers);
+            try {
+                Assert.assertTrue(countForeignPlayers <= 4);
                 System.out.println("Test Case: Passed");
                 test.pass("PASSED");
-            }
-            else {
-                System.out.println("Test Case:Failed\n"+"Actual count of foreign players:" + countForeignPlayers);
+            } catch (AssertionError e) {
+                System.out.println("Test Case:Failed\n" + "Actual count of foreign players:" + countForeignPlayers);
                 test.fail("FAILED");
             }
         } catch (Exception e) {
@@ -83,21 +86,20 @@ public class VerifyRCB {
     @Test
     public void verifyWicketKeeper() {
         try {
-            test= extentReports.createTest("Verify Wicket Keeper");
+            test = extentReports.createTest("Verify Wicket Keeper");
             int wicketKeeperCount = 0;
             for (int i = 0; i < rcbTeam.playerList.size(); i++) {
                 String playerRole = rcbTeam.playerList.get(i).playerRole;
                 if (playerRole.equals("Wicket-keeper"))
                     wicketKeeperCount++;
             }
-            test.log(Status.INFO,"Total wicket-keeper count:"+wicketKeeperCount);
-            if (wicketKeeperCount >0)
-            {
+            test.log(Status.INFO, "Total wicket-keeper count:" + wicketKeeperCount);
+            try {
+                Assert.assertTrue(wicketKeeperCount > 0);
                 System.out.println("Test Case: Passed");
                 test.pass("PASSED");
-            }
-            else {
-                System.out.println("Test Case:Failed\n"+"No wicket-keeper found");
+            } catch (AssertionError e) {
+                System.out.println("Test Case:Failed\n" + "No wicket-keeper found");
                 test.fail("FAILED");
             }
         } catch (Exception e) {
